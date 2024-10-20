@@ -103,6 +103,7 @@ export const UserSlice = createSlice({
   initialState: {
     error: null,
     loading: false,
+    logged: false,
     user: {},
     users: [],
   },
@@ -165,23 +166,29 @@ export const UserSlice = createSlice({
     });
     builder.addCase(loginUser.pending, (state, action) => {
       state.loading = true;
+      state.logged = false;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
       state.loading = false;
+      state.logged = true;
     });
     builder.addCase(loginUser.rejected, (state, action) => {
       state.loading = false;
+      state.logged = false;
       state.error = action.payload;
     });
     builder.addCase(persistance.pending, (state, action) => {
       state.loading = true;
+      state.logged = false;
     });
     builder.addCase(persistance.fulfilled, (state, action) => {
       state.loading = false;
+      state.logged = true;
       state.user = action.payload;
     });
     builder.addCase(persistance.rejected, (state, action) => {
       state.loading = false;
+      state.logged = false;
       state.error = action.payload;
     });
     builder.addCase(logoutUser.pending, (state, action) => {
