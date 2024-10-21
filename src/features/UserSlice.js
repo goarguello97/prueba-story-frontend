@@ -64,7 +64,9 @@ export const loginUser = createAsyncThunk(
   "LOGIN_USER",
   async (data, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`/api/users/login`, data);
+      const response = await axiosInstance.post(`/api/users/login`, data, {
+        withCredentials: true,
+      });
       return response.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -77,7 +79,9 @@ export const persistance = createAsyncThunk(
   "PERSISTENCE",
   async (_, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`/api/users/me`);
+      const response = await axiosInstance.get(`/api/users/me`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -104,6 +108,7 @@ export const UserSlice = createSlice({
     error: null,
     loading: false,
     logged: false,
+    register: null,
     user: {},
     users: [],
   },
@@ -136,10 +141,12 @@ export const UserSlice = createSlice({
     });
     builder.addCase(addUser.fulfilled, (state, action) => {
       state.loading = false;
+      state.register = true;
       state.user = action.payload;
     });
     builder.addCase(addUser.rejected, (state, action) => {
       state.loading = false;
+      state.register = null;
       state.error = action.payload;
     });
     builder.addCase(updateUser.pending, (state, action) => {
