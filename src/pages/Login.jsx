@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { LOGIN_INITIAL_VALUES } from "../constants";
-import { loginUser } from "../features/UserSlice";
+import { loginUser, persistance } from "../features/UserSlice";
 import { validationLogin } from "../helpers/validations";
 import useFormHook from "../hooks/useFormHook";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { logged, error } = useSelector((state) => state.user);
 
   const { values, handleChange, handleSubmit, errors } = useFormHook(
@@ -20,9 +21,10 @@ const Login = () => {
   useEffect(() => {
     if (logged) {
       navigate("/");
+      dispatch(persistance());
     }
   }, [error, logged]);
-  console.log(logged);
+
   return (
     <Form className="w-75 m-auto mt-4" onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="formBasicEmail">

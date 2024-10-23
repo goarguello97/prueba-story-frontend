@@ -94,7 +94,9 @@ export const logoutUser = createAsyncThunk(
   "LOGOUT_USER",
   async (_, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`/api/users/logout`);
+      const response = await axiosInstance.get(`/api/users/logout`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch ({ response }) {
       const { message } = response.data;

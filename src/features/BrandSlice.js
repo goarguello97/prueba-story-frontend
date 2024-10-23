@@ -28,7 +28,9 @@ export const addBrand = createAsyncThunk(
   "ADD_BRAND",
   async (data, thunkApi) => {
     try {
-      const createdBrand = await axiosInstance.post(`/api/brands/`, data);
+      const createdBrand = await axiosInstance.post(`/api/brands/`, data, {
+        withCredentials: true,
+      });
       return createdBrand.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -39,9 +41,15 @@ export const addBrand = createAsyncThunk(
 
 export const updateBrand = createAsyncThunk(
   "UPDATE_BRAND",
-  async ({ id, body }, thunkApi) => {
+  async (data, thunkApi) => {
     try {
-      const updatedBrand = await axiosInstance.put(`/api/brands/${id}`, body);
+      const updatedBrand = await axiosInstance.put(
+        `/api/brands/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
       return updatedBrand.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -54,7 +62,9 @@ export const deleteBrand = createAsyncThunk(
   "DELETE_BRAND",
   async (data, thunkApi) => {
     try {
-      const response = await axiosInstance.delete(`/api/brands/${data}`);
+      const response = await axiosInstance.delete(`/api/brands/${data}`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -71,7 +81,11 @@ export const BrandSlice = createSlice({
     brand: {},
     brands: [],
   },
-  reducers: {},
+  reducers: {
+    resetError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getBrands.pending, (state, action) => {
       state.loading = true;
@@ -129,5 +143,6 @@ export const BrandSlice = createSlice({
     });
   },
 });
+export const { resetError } = BrandSlice.actions;
 
 export default BrandSlice.reducer;

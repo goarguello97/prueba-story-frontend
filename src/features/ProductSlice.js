@@ -31,7 +31,9 @@ export const addProduct = createAsyncThunk(
   "ADD_PRODUCT",
   async (data, thunkApi) => {
     try {
-      const createdProduct = await axiosInstance.post(`/api/products/`, data);
+      const createdProduct = await axiosInstance.post(`/api/products/`, data, {
+        withCredentials: true,
+      });
       return createdProduct.data;
     } catch ({ response }) {
       const { message } = response.data;
@@ -42,11 +44,12 @@ export const addProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "UPDATE_PRODUCT",
-  async ({ id, body }, thunkApi) => {
+  async (data, thunkApi) => {
     try {
       const updatedProduct = await axiosInstance.put(
-        `/api/products/${id}`,
-        body
+        `/api/products/${data.id}`,
+        data,
+        { withCredentials: true }
       );
       return updatedProduct.data;
     } catch ({ response }) {
@@ -60,7 +63,9 @@ export const deleteProduct = createAsyncThunk(
   "DELETE_PRODUCT",
   async (data, thunkApi) => {
     try {
-      const response = await axiosInstance.delete(`/api/products/${data}`);
+      const response = await axiosInstance.delete(`/api/products/${data}`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch ({ response }) {
       const { message } = response.data;
