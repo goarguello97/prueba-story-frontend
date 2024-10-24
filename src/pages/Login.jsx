@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { LOGIN_INITIAL_VALUES } from "../constants";
-import { loginUser, persistance } from "../features/UserSlice";
+import { loginUser, persistance, resetError } from "../features/UserSlice";
 import { validationLogin } from "../helpers/validations";
 import useFormHook from "../hooks/useFormHook";
 
@@ -11,6 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { logged, error } = useSelector((state) => state.user);
+  const [flag, setFlag] = useState(false);
 
   const { values, handleChange, handleSubmit, errors } = useFormHook(
     LOGIN_INITIAL_VALUES,
@@ -23,7 +24,16 @@ const Login = () => {
       navigate("/");
       dispatch(persistance());
     }
-  }, [error, logged]);
+    if (error) {
+      setFlag(true);
+      if (flag) {
+        setTimeout(() => {
+          setFlag(false);
+          dispatch(resetError());
+        }, 5000);
+      }
+    }
+  }, [error, errors, flag, logged]);
 
   return (
     <Form className="w-75 m-auto mt-4" onSubmit={handleSubmit}>
@@ -65,11 +75,19 @@ const Login = () => {
       </Button>
       {Object.keys(errors).length !== 0
         ? Object.values(errors).map((error, i) => (
-            <div key={i} className="login-form-error">
+            <div
+              key={i}
+              className="bg-danger text-light d-flex align-items-center"
+            >
               {error}
             </div>
           ))
         : null}
+      {error && (
+        <div className="bg-danger text-light d-flex align-items-center">
+          {error}
+        </div>
+      )}
     </Form>
   );
 };

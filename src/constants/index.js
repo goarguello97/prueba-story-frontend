@@ -6,6 +6,7 @@ export const LOGIN_INITIAL_VALUES = {
 export const REGISTER_INITIAL_VALUES = {
   username: "",
   password: "",
+  password2: "",
 };
 
 export const PRODUCT_INITIAL_VALUES = {

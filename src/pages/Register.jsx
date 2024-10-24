@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { REGISTER_INITIAL_VALUES } from "../constants";
-import { addUser } from "../features/UserSlice";
+import { addUser, resetError } from "../features/UserSlice";
 import { validationRegister } from "../helpers/validations";
 import useFormHook from "../hooks/useFormHook";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { error, register } = useSelector((state) => state.user);
+  const [flag, setFlag] = useState(false);
 
   const { values, handleChange, handleSubmit, errors } = useFormHook(
     REGISTER_INITIAL_VALUES,
@@ -21,7 +23,16 @@ const Register = () => {
     if (register) {
       navigate("/login");
     }
-  }, [error, errors, register]);
+    if (error) {
+      setFlag(true);
+      if (flag) {
+        setTimeout(() => {
+          setFlag(false);
+          dispatch(resetError());
+        }, 5000);
+      }
+    }
+  }, [error, errors, flag, register]);
 
   return (
     <Form className="w-75 m-auto mt-4" onSubmit={handleSubmit}>
@@ -88,11 +99,19 @@ const Register = () => {
       </Button>
       {Object.keys(errors).length !== 0
         ? Object.values(errors).map((error, i) => (
-            <div key={i} className="login-form-error">
+            <div
+              key={i}
+              className="bg-danger text-light d-flex align-items-center"
+            >
               {error}
             </div>
           ))
         : null}
+      {error && (
+        <div className="bg-danger text-light d-flex align-items-center">
+          {error}
+        </div>
+      )}
     </Form>
   );
 };
